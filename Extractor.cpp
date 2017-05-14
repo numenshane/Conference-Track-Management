@@ -99,6 +99,8 @@ bool TwoSessionTrackExtractor::Extract()
         return false;
     }
     GetMaxAfternoonSession(m_talks, m_afternoonSessions);
+    // revised:　diff exactly matching from partial matching, store the excellent matching endpoint
+    // for each sacrifice, supplement to afternoon from this matching endpoint to refactor by one morning session
     while ( m_morningSessions.size() > m_afternoonSessions.size()+1)
     {
         int round = m_morningSessions.size() - m_afternoonSessions.size();
