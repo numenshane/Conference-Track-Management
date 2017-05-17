@@ -30,10 +30,10 @@ bool TrackExtractor::combineTalks(Talks& talks, Talks& chosen_talks, int min_min
             {    
                 index_arr.push_back(j);
                 total_mins = total_mins + talks[j].m_mins;
-                if (total_mins >= min_minutes) // qualified
+                if (total_mins >= min_minutes) // basic qualified, but not fully qualified!
                 {
                     found = true; 
-                    break;
+					continue; // a little greedy
                 }
             }
             else continue; //don't account j
@@ -188,7 +188,7 @@ int TwoSessionTrackExtractor::GetMaxAfternoonSession(Talks& talks, Sessions& ses
     while(true)
     {
         Talks session;
-        if (combineTalks(talks, session, m_afternoonSessionMax, m_afternoonSessionMax) )
+        if ( combineTalks(talks, session, m_afternoonSessionMax, m_afternoonSessionMax) )
         {
             sessions.push_back(session);
 			inc_full += 1;
@@ -198,7 +198,7 @@ int TwoSessionTrackExtractor::GetMaxAfternoonSession(Talks& talks, Sessions& ses
 	while(true)
 	{
 		Talks session;
-		if (combineTalks(talks, session, m_afternoonSessionMin, m_afternoonSessionMax) )
+		if ( combineTalks(talks, session, m_afternoonSessionMin, m_afternoonSessionMax) )
 		{
 			sessions.push_back(session);
 		}
