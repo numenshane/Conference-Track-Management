@@ -4,9 +4,9 @@
 #include <iostream>
 
 // descend 
-bool TalkCompare (Talk i,Talk j) { return (i.m_mins > j.m_mins); }
+bool TalkCompare (Talk i, Talk j) { return (i.m_mins > j.m_mins); }
 
-TrackExtractor::TrackExtractor(Talks talks)
+TrackExtractor::TrackExtractor(const Talks& talks)
 {
     m_talks = talks;   
 }
@@ -98,7 +98,8 @@ bool TwoSessionTrackExtractor::Extract()
         #endif
         return false;
     }
-    GetMaxAfternoonSession(m_talks, m_afternoonSessions);
+	int index = 0; // afternoonSession full capacity index
+    index += GetMaxAfternoonSession(m_talks, m_afternoonSessions);
     // revised:　diff exactly matching from partial matching, store the excellent matching endpoint
     // for each sacrifice, supplement to afternoon from this matching endpoint to refactor by one morning session
     while ( m_morningSessions.size() > m_afternoonSessions.size()+1)
@@ -109,12 +110,12 @@ bool TwoSessionTrackExtractor::Extract()
         m_morningSessions.pop_back();
         copy(session.begin(), session.end(), back_inserter(m_talks));
         // reshuffling for afternoonSessions
-        for (SessionsIter iter = m_afternoonSessions.begin(); iter != m_afternoonSessions.end(); iter++)
+        for (SessionsIter iter = m_afternoonSessions.begin() + index; iter != m_afternoonSessions.end(); iter++)
         {
             Talks session = *iter;
             copy(session.begin(), session.end(), back_inserter(m_talks)); 
         }
-        GetMaxAfternoonSession(m_talks, m_afternoonSessions);
+        index += GetMaxAfternoonSession(m_talks, m_afternoonSessions);
         if ( (round -1) == (int)(m_morningSessions.size() - m_afternoonSessions.size())) 
             //no progress
             return false;
@@ -124,12 +125,12 @@ bool TwoSessionTrackExtractor::Extract()
         int left_mins=0; 
         for (TalksIter iter = m_talks.begin(); iter != m_talks.end(); iter++)
             left_mins += iter->m_mins;
-        if ( m_morningSessions.size() == m_afternoonSessions.size()+1 && left_mins <= m_afternoonSessionMax  )
+        if ( m_morningSessions.size() == m_afternoonSessions.size()+1 && left_mins <= m_afternoonSessionMax )
         {
             m_afternoonSessions.push_back(m_talks);
             return true;
         }
-        if ( m_morningSessions.size() == m_afternoonSessions.size() && left_mins <= m_morningSessionMax)
+        if ( m_morningSessions.size() == m_afternoonSessions.size() && left_mins <= m_morningSessionMax )
         {
             m_morningSessions.push_back(m_talks);
             return true;
@@ -147,7 +148,7 @@ bool TwoSessionTrackExtractor::Extract()
     return true;
 }
 
-TwoSessionTrackExtractor::TwoSessionTrackExtractor(Talks talks, int mornMin, int mornMax, int afterMin, int afterMax):TrackExtractor(talks)
+TwoSessionTrackExtractor::TwoSessionTrackExtractor(const Talks& talks, int mornMin, int mornMax, int afterMin, int afterMax):TrackExtractor(talks)
 {
     m_morningSessionMin = mornMin;
     m_morningSessionMax = mornMax;
@@ -181,20 +182,29 @@ bool TwoSessionTrackExtractor::GetLimitedMorningSession(Talks& talks, Sessions& 
     return true;
 }
 
-bool TwoSessionTrackExtractor::GetMaxAfternoonSession(Talks& talks, Sessions& sessions)
+int TwoSessionTrackExtractor::GetMaxAfternoonSession(Talks& talks, Sessions& sessions)
 {
-    bool flag = false;
+	int inc_full = 0;
     while(true)
     {
         Talks session;
-        if (combineTalks(talks, session, m_afternoonSessionMin, m_afternoonSessionMax) )
+        if (combineTalks(talks, session, m_afternoonSessionMax, m_afternoonSessionMax) )
         {
-            flag = true;
             sessions.push_back(session);
+			inc_full += 1;
         }
         else break;
     }
-    return flag;
+	while(true)
+	{
+		Talks session;
+		if (combineTalks(talks, session, m_afternoonSessionMin, m_afternoonSessionMax) )
+		{
+			sessions.push_back(session);
+		}
+		else break;
+	}
+	return inc_full;
 }
 
 void SequenceVisitor::visit(TrackExtractor* e)

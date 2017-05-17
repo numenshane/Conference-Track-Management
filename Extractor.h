@@ -13,7 +13,7 @@ typedef Sessions::iterator SessionsIter;
 
 class TrackExtractor {
 public:
-    TrackExtractor(Talks talks);
+    TrackExtractor(const Talks& talks);
     virtual bool Extract() ;
     virtual void accpet(Visitor &v) ;
     virtual ~TrackExtractor() {}
@@ -36,10 +36,10 @@ class TwoSessionTrackExtractor: public TrackExtractor{
 public:
     bool Extract();
     void accept(Visitor &v);
-    TwoSessionTrackExtractor(Talks talks, int mornMin, int mornMax, int afterMin, int afterMax);
+    TwoSessionTrackExtractor(const Talks&  talks, int mornMin, int mornMax, int afterMin, int afterMax);
 private:
     bool GetLimitedMorningSession(Talks& talks, vector<Talks>& sessions);
-    bool GetMaxAfternoonSession(Talks& talks, vector<Talks>& sessions);
+    int GetMaxAfternoonSession(Talks& talks, vector<Talks>& sessions);
     
 private:
     // morning session minutes range
