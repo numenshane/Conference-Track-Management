@@ -207,7 +207,7 @@ int TwoSessionTrackExtractor::GetMaxAfternoonSession(Talks& talks, Sessions& ses
 	return inc_full;
 }
 
-void SequenceVisitor::visit(TrackExtractor* e)
+void SequenceVisitor::visit(TrackExtractor * const e)
 {
     UNUSED(e);
     #ifdef DEBUG
@@ -215,7 +215,7 @@ void SequenceVisitor::visit(TrackExtractor* e)
     #endif
 }
 
-void SequenceVisitor::visit(TwoSessionTrackExtractor* e)
+void SequenceVisitor::visit(TwoSessionTrackExtractor * const e)
 {
     #ifdef DEBUG
         cout << "SequenceVisitor visit TwoSessionTrackExtractor" << endl;

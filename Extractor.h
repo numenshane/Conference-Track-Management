@@ -62,15 +62,14 @@ public:
 
 class Visitor{
 public:
-    virtual void visit(TrackExtractor* e) = 0;
-    virtual void visit(TwoSessionTrackExtractor* e) = 0;
+    virtual void visit(TrackExtractor * const e) = 0;
+    virtual void visit(TwoSessionTrackExtractor * const e) = 0;
 };
 
 class SequenceVisitor: public Visitor
 {
 public:
-    void visit(TrackExtractor* e);
-    void visit(TwoSessionTrackExtractor* e);
+    void visit(TrackExtractor * const e);
+    void visit(TwoSessionTrackExtractor * const e);
 };
-
 #endif
