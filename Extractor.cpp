@@ -33,7 +33,7 @@ bool TrackExtractor::combineTalks(Talks& talks, Talks& chosen_talks, int min_min
                 if (total_mins >= min_minutes) // basic qualified, but not fully qualified!
                 {
                     found = true; 
-					continue; // a little greedy
+		    continue; // a little greedy
                 }
             }
             else continue; //don't account j
